@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colindători Bine Veniți</title>
+    <title>Colindători Bine Veniți - Cartier Tineri Buftea</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <link rel="stylesheet" href="styles/main.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
@@ -11,10 +11,163 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
-    <!-- Conținut HTML aici -->
-    
+    <div id="header">
+        <div id="header-content">
+            <div id="header-title">
+                <span style="font-size: 1.5rem;">📍</span>
+                <div>
+                    <h1>Colindători Bine Veniți 🎄</h1>
+                    <p>Cartier Tineri, Buftea - Click pe hartă să adaugi casa!</p>
+                </div>
+            </div>
+            <div id="pin-count">
+                <span id="pin-count-text">0 case</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="instructions">
+        <div id="instructions-content">
+            <span>⚠️</span>
+            <div>
+                <strong>Cum adaugi casa ta:</strong> Click pe hartă în locația casei tale → Apasă "+" → Completează formularul
+            </div>
+        </div>
+    </div>
+
+    <div id="main-container">
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+        
+        <button id="add-btn-pc" class="hidden">
+            <span style="font-size: 1.5rem; font-weight: bold;">+</span>
+            Adaugă Casa Mea
+        </button>
+        
+        <div id="mobile-controls">
+            <button id="location-btn-mobile" title="Centrare hartă">
+                📍
+            </button>
+            <button id="add-btn-mobile" title="Adaugă casă">
+                +
+            </button>
+        </div>
+        
+        <div id="connection-status" class="connection-status hidden">
+            <span class="status-icon"></span>
+            <span class="status-text"></span>
+        </div>
+        
+        <div id="modal-overlay" class="modal-overlay hidden"></div>
+        
+        <div id="add-modal" class="modal modal-add hidden">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span style="font-size: 1.5rem;">+</span>
+                    Adaugă Casa Ta
+                </h3>
+                <button class="close-btn" onclick="closeAddModal()">×</button>
+            </div>
+            
+            <div id="location-success" class="success-box hidden">
+                <p class="success-text">✓ Locație selectată</p>
+                <p class="hint-text">Click pe hartă pentru a schimba locația exactă</p>
+            </div>
+            
+            <div id="error-message" class="error-box hidden">
+                <div style="display: flex; gap: 0.5rem;">
+                    <span style="font-size: 1.25rem;">❌</span>
+                    <div style="flex: 1;">
+                        <p class="error-text" style="font-weight: 600; margin-bottom: 0.25rem;">Eroare</p>
+                        <p class="error-text" id="error-text" style="white-space: pre-line;"></p>
+                    </div>
+                </div>
+                <button onclick="closeError()" style="margin-top: 0.5rem; font-size: 0.75rem; color: #991b1b; background: none; border: none; cursor: pointer; font-weight: 500;">
+                    Închide
+                </button>
+            </div>
+            
+            <form id="add-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Alege iconița ta de Crăciun 🎅</label>
+                    <div class="icon-grid" id="icon-grid"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">👤 Nume Familie *</label>
+                    <input type="text" class="form-input" id="name" placeholder="Numele familiei" maxlength="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">🏠 Denumire Stradă *</label>
+                    <input type="text" class="form-input" id="address" placeholder="Denumire stradă" maxlength="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Număr Poștal *</label>
+                    <input type="text" class="form-input" id="streetNumber" placeholder="Număr poștal" maxlength="10" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">🕐 Program preferat</label>
+                    <input type="text" class="form-input" id="schedule" placeholder="Ex: 24 dec, 18:00-21:00" maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Detalii suplimentare</label>
+                    <textarea class="form-textarea" id="notes" rows="3" placeholder="Ex: Sunați la interfon, poartă verde" maxlength="200"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Parolă pentru ștergere (opțional)</label>
+                    <input type="password" class="form-input" id="password" placeholder="Setează o parolă" maxlength="20">
+                    <p class="hint-text">💡 Doar tu vei putea șterge pin-ul cu această parolă</p>
+                </div>
+                
+                <div class="submit-btn-container">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Adaugă pe Hartă
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="view-modal" class="modal modal-view hidden">
+            <div id="view-content"></div>
+            <div id="delete-form" class="hidden">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="color: #dc2626;">Șterge Pin</h3>
+                    <button class="close-btn" onclick="closeDeleteForm()">×</button>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Introdu parola:</label>
+                    <input type="password" class="form-input" id="delete-password" placeholder="Parola de ștergere" required>
+                    <p class="hint-text">💡 Introdu parola ta dacă ai setat-o, sau cere adminului</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button onclick="confirmDelete()" class="btn btn-danger" style="flex: 1;">
+                        Șterge Pin
+                    </button>
+                    <button onclick="closeDeleteForm()" class="btn btn-secondary" style="flex: 1;">
+                        Anulează
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loading">
+            <div style="text-align: center;">
+                <div class="spinner"></div>
+                <p style="margin-top: 1rem; color: #6b7280; font-weight: 500;">Se încarcă harta...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // TOATĂ LOGICA AICI - garantat funcționează
+        // TOATĂ LOGICA JavaScript AICI - garantat funcționează
         const firebaseConfig = {
             apiKey: "AIzaSyD4j5pOuXalnS-TErmivkJEa-4ki5e_x6s",
             authDomain: "colindatori-buftea.firebaseapp.com",
@@ -28,15 +181,415 @@
         const ADMIN_PASSWORD = 'colind2025';
         const ICONS = ['🎄', '🍬', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️'];
         
-        let map, markers = [], pins = [], selectedIcon = '🎄', clickedLocation = null, selectedPin = null, isConnected = false;
-
+        let map;
+        let markers = [];
+        let pins = [];
+        let selectedIcon = '🎄';
+        let clickedLocation = null;
+        let selectedPin = null;
+        let isConnected = false;
+        
         document.addEventListener('DOMContentLoaded', init);
-
+        
         function init() {
-            // tot codul tău original aici
+            initFirebase();
+            initMap();
+            initIconGrid();
+            setupEventListeners();
+            checkScreenSize();
+            
+            window.addEventListener('resize', checkScreenSize);
         }
-
-        // toate celelalte funcții aici...
+        
+        function checkScreenSize() {
+            const addBtnPc = document.getElementById('add-btn-pc');
+            if (window.innerWidth >= 768) {
+                addBtnPc.classList.remove('hidden');
+            } else {
+                addBtnPc.classList.add('hidden');
+            }
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('add-btn-pc').addEventListener('click', openAddModal);
+            document.getElementById('add-btn-mobile').addEventListener('click', openAddModal);
+            document.getElementById('location-btn-mobile').addEventListener('click', centerMap);
+            document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
+        }
+        
+        function centerMap() {
+            if (clickedLocation) {
+                map.setView([clickedLocation.lat, clickedLocation.lng], 17);
+            } else {
+                map.setView([44.545593, 25.931531], 17);
+            }
+        }
+        
+        function initFirebase() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                const database = firebase.database();
+                
+                const connectedRef = database.ref(".info/connected");
+                connectedRef.on("value", function(snap) {
+                    isConnected = snap.val() === true;
+                    updateConnectionStatus();
+                });
+                
+                loadPins();
+            } catch (error) {
+                console.error("Eroare la inițializarea Firebase:", error);
+                showToast("Eroare de conexiune cu baza de date", "error");
+            }
+        }
+        
+        function updateConnectionStatus() {
+            const statusElement = document.getElementById('connection-status');
+            const statusIcon = statusElement.querySelector('.status-icon');
+            const statusText = statusElement.querySelector('.status-text');
+            
+            if (isConnected) {
+                statusElement.className = 'connection-status connected';
+                statusIcon.textContent = '✓';
+                statusText.textContent = 'Conectat';
+            } else {
+                statusElement.className = 'connection-status disconnected';
+                statusIcon.textContent = '⚠️';
+                statusText.textContent = 'Deconectat';
+            }
+            
+            statusElement.classList.remove('hidden');
+        }
+        
+        function initMap() {
+            map = L.map('map').setView([44.545593, 25.931531], 17);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+            
+            L.DomEvent.on(map.getContainer(), 'touchstart', L.DomEvent.stopPropagation);
+            
+            map.on('click', (e) => {
+                clickedLocation = { lat: e.latlng.lat, lng: e.latlng.lng };
+                
+                if (window.tempMarker) {
+                    window.tempMarker.remove();
+                }
+                
+                window.tempMarker = L.marker([e.latlng.lat, e.latlng.lng], {
+                    icon: L.divIcon({
+                        html: '<div style="font-size: 48px; animation: pulse 1s infinite; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4));">📍</div>',
+                        className: 'temp-marker',
+                        iconSize: [48, 48],
+                        iconAnchor: [24, 48]
+                    })
+                }).addTo(map);
+                
+                if (!document.getElementById('add-modal').classList.contains('hidden')) {
+                    document.getElementById('location-success').classList.remove('hidden');
+                }
+            });
+            
+            setTimeout(() => {
+                map.invalidateSize();
+                document.getElementById('loading').classList.add('hidden');
+            }, 300);
+            
+            window.addEventListener('resize', () => {
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100);
+            });
+        }
+        
+        function initIconGrid() {
+            const grid = document.getElementById('icon-grid');
+            grid.innerHTML = '';
+            ICONS.forEach(icon => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'icon-btn';
+                btn.textContent = icon;
+                btn.onclick = () => selectIcon(icon);
+                if (icon === selectedIcon) btn.classList.add('selected');
+                grid.appendChild(btn);
+            });
+        }
+        
+        function selectIcon(icon) {
+            selectedIcon = icon;
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === icon);
+            });
+        }
+        
+        function loadPins() {
+            try {
+                const database = firebase.database();
+                database.ref('pins').on('value', (snapshot) => {
+                    pins = [];
+                    snapshot.forEach((child) => {
+                        pins.push({ id: child.key, ...child.val() });
+                    });
+                    updateMap();
+                    updatePinCount();
+                }, (error) => {
+                    console.error("Eroare la încărcarea pin-urilor:", error);
+                    showToast("Eroare la încărcarea datelor", "error");
+                });
+            } catch (error) {
+                console.error("Eroare la încărcarea pin-urilor:", error);
+                showToast("Eroare la încărcarea datelor", "error");
+            }
+        }
+        
+        function updateMap() {
+            markers.forEach(marker => marker.remove());
+            markers = [];
+            
+            pins.forEach(pin => {
+                const icon = pin.icon || '🎄';
+                const marker = L.marker([pin.lat, pin.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="font-size: 42px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); transform: translateY(-5px);">${icon}</div>`,
+                        className: 'custom-marker',
+                        iconSize: [42, 42],
+                        iconAnchor: [21, 42]
+                    })
+                }).addTo(map);
+                
+                const tooltipText = `<strong>${pin.name}</strong><br>Str. ${pin.address}, Nr. ${pin.streetNumber}`;
+                marker.bindTooltip(tooltipText, {
+                    direction: 'top',
+                    offset: [0, -40],
+                    opacity: 0.95
+                });
+                
+                marker.on('click', () => showPin(pin));
+                markers.push(marker);
+            });
+        }
+        
+        function updatePinCount() {
+            const count = pins.length;
+            const text = count === 1 ? 'casă' : 'case';
+            document.getElementById('pin-count-text').textContent = `${count} ${text}`;
+        }
+        
+        function showError(message) {
+            document.getElementById('error-text').textContent = message;
+            document.getElementById('error-message').classList.remove('hidden');
+        }
+        
+        function closeError() {
+            document.getElementById('error-message').classList.add('hidden');
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        function openAddModal() {
+            if (!clickedLocation) {
+                showToast('⚠️ Mai întâi dă click pe hartă unde vrei să adaugi casa!', 'error');
+                return;
+            }
+            showModal('add-modal');
+            document.getElementById('location-success').classList.remove('hidden');
+        }
+        
+        function closeAddModal() {
+            hideModal('add-modal');
+            document.getElementById('add-form').reset();
+            document.getElementById('error-message').classList.add('hidden');
+            clickedLocation = null;
+            selectedIcon = '🎄';
+            initIconGrid();
+            
+            if (window.tempMarker) {
+                window.tempMarker.remove();
+                window.tempMarker = null;
+            }
+        }
+        
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById('modal-overlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        function closeAllModals() {
+            hideModal('add-modal');
+            hideModal('view-modal');
+        }
+        
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            closeError();
+            
+            const name = document.getElementById('name').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const streetNumber = document.getElementById('streetNumber').value.trim();
+            
+            const missingFields = [];
+            if (!name) missingFields.push('Nume Familie');
+            if (!address) missingFields.push('Denumire Stradă');
+            if (!streetNumber) missingFields.push('Număr Poștal');
+            
+            if (missingFields.length > 0) {
+                showError('Te rog completează următoarele câmpuri obligatorii:\n\n• ' + missingFields.join('\n• '));
+                return;
+            }
+            
+            if (!clickedLocation) {
+                showError('Te rog selectează o locație pe hartă!');
+                return;
+            }
+            
+            if (!isConnected) {
+                showError('Nu ești conectat la internet. Te rog verifică conexiunea și încearcă din nou.');
+                return;
+            }
+            
+            const pinData = {
+                name,
+                address,
+                streetNumber,
+                schedule: document.getElementById('schedule').value,
+                notes: document.getElementById('notes').value,
+                icon: selectedIcon,
+                password: document.getElementById('password').value,
+                lat: clickedLocation.lat,
+                lng: clickedLocation.lng,
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                const database = firebase.database();
+                database.ref('pins').push(pinData)
+                    .then(() => {
+                        closeAddModal();
+                        
+                        if (window.tempMarker) {
+                            window.tempMarker.remove();
+                            window.tempMarker = null;
+                        }
+                        
+                        showToast('✅ Casă adăugată cu succes!');
+                    })
+                    .catch((error) => {
+                        console.error('Save error:', error);
+                        showError('Eroare la salvare: ' + error.message);
+                    });
+            } catch (error) {
+                console.error('Save error:', error);
+                showError('Eroare la salvare: ' + error.message);
+            }
+        }
+        
+        function showPin(pin) {
+            selectedPin = pin;
+            const addressText = `Str. ${pin.address}, Nr. ${pin.streetNumber}`;
+            
+            let html = `
+                <div class="modal-header">
+                    <div>
+                        <h3 class="modal-title">${pin.name}</h3>
+                        <p class="pin-detail">
+                            <span>🏠</span>
+                            ${addressText}
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="icon-delete" onclick="showDeleteForm()">🗑️</button>
+                        <button class="close-btn" onclick="closeViewModal()">×</button>
+                    </div>
+                </div>
+            `;
+            
+            if (pin.schedule) {
+                html += `<p class="pin-detail"><span>🕐</span><span style="font-weight: 500;">${pin.schedule}</span></p>`;
+            }
+            
+            if (pin.notes) {
+                html += `<div class="divider"><p style="font-size: 0.875rem; color: #6b7280;">${pin.notes}</p></div>`;
+            }
+            
+            document.getElementById('view-content').innerHTML = html;
+            showModal('view-modal');
+            document.getElementById('delete-form').classList.add('hidden');
+        }
+        
+        function closeViewModal() {
+            hideModal('view-modal');
+            selectedPin = null;
+            document.getElementById('view-content').style.display = 'block';
+            document.getElementById('delete-form').classList.add('hidden');
+        }
+        
+        function showDeleteForm() {
+            document.getElementById('view-content').style.display = 'none';
+            document.getElementById('delete-form').classList.remove('hidden');
+        }
+        
+        function closeDeleteForm() {
+            document.getElementById('view-content').style.display = 'block';
+            document.getElementById('delete-form').classList.add('hidden');
+            document.getElementById('delete-password').value = '';
+        }
+        
+        function confirmDelete() {
+            if (!selectedPin) return;
+            
+            const password = document.getElementById('delete-password').value;
+            
+            if (!password) {
+                showToast('Te rog introdu parola!', 'error');
+                return;
+            }
+            
+            const isAdmin = password === ADMIN_PASSWORD;
+            const isOwner = selectedPin.password && password === selectedPin.password;
+            
+            if (!isAdmin && !isOwner) {
+                showToast('❌ Parolă incorectă!', 'error');
+                document.getElementById('delete-password').value = '';
+                return;
+            }
+            
+            try {
+                const database = firebase.database();
+                database.ref('pins/' + selectedPin.id).remove()
+                    .then(() => {
+                        closeViewModal();
+                        showToast('✅ Pin șters cu succes!');
+                    })
+                    .catch((error) => {
+                        console.error('Delete error:', error);
+                        showToast('Eroare la ștergere: ' + error.message, 'error');
+                    });
+            } catch (error) {
+                console.error('Delete error:', error);
+                showToast('Eroare la ștergere: ' + error.message, 'error');
+            }
+        }
     </script>
 </body>
 </html>
