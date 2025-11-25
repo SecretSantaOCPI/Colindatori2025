@@ -12,7 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
     <style>
-        /* CSS-ul rămâne neschimbat, deoarece este deja bine structurat */
         * {
             margin: 0;
             padding: 0;
@@ -204,10 +203,10 @@
             background: #2563eb;
         }
 
-        /* BUTON GPS PENTRU LOCALIZARE */
+        /* BUTON GPS PENTRU LOCALIZARE - MUTAT ÎN PARTEA DE JOS */
         #gps-btn {
             position: fixed;
-            top: 120px;
+            bottom: 20px;
             left: 20px;
             z-index: 1000;
             background: #10b981;
@@ -241,6 +240,35 @@
         
         #gps-btn.loading {
             background: #f59e0b;
+        }
+
+        /* BUTON CENTRARE HARTĂ */
+        #center-btn {
+            position: fixed;
+            top: 120px;
+            left: 20px;
+            z-index: 1000;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        #center-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: #7c3aed;
         }
 
         /* STILURI BUTOANE MODALE - RESTABILITE */
@@ -692,6 +720,13 @@
             }
             
             #gps-btn {
+                bottom: 10px;
+                left: 10px;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            #center-btn {
                 top: 110px;
                 left: 10px;
                 padding: 10px 16px;
@@ -737,8 +772,13 @@
                 right: 30px;
             }
             
-            #gps-btn {
+            #center-btn {
                 top: 180px;
+                left: 30px;
+            }
+            
+            #gps-btn {
+                bottom: 30px;
                 left: 30px;
             }
         }
@@ -780,7 +820,13 @@
             Adaugă Casa Mea
         </button>
         
-        <!-- Buton GPS pentru localizare -->
+        <!-- Buton centrare hartă -->
+        <button id="center-btn" title="Centrare hartă pe Cartierul Tineri">
+            <span style="font-size: 1.2rem;">🏠</span>
+            Centrare Hartă
+        </button>
+        
+        <!-- Buton GPS pentru localizare - MUTAT ÎN PARTEA DE JOS -->
         <button id="gps-btn" title="Folosește locația ta actuală">
             <span style="font-size: 1.2rem;">📍</span>
             Locația Mea
@@ -935,7 +981,9 @@
         
         // Parola de admin - ar trebui să fie gestionată mai sigur în producție
         const ADMIN_PASSWORD = 'colind2025';
-        const ICONS = ['🎄', '🍬', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️'];
+        
+        // Iconițe extinse cu 4 noi opțiuni
+        const ICONS = ['🎄', '🍬', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️', '🦌', '🧦', '🌟', '🤶'];
         
         // Lista strazilor predefinite - în ordine alfabetică
         const PREDEFINED_STREETS = [
@@ -958,6 +1006,9 @@
             "Trifoiului",
             "Ulmului"
         ].sort();
+        
+        // Coordonatele centrale pentru Cartierul Tineri, Buftea
+        const CARTIER_CENTER = [44.545593, 25.931531];
         
         // Variabile globale
         let map;
@@ -995,17 +1046,16 @@
         function setupEventListeners() {
             document.getElementById('add-btn-pc').addEventListener('click', openAddModal);
             document.getElementById('add-btn-mobile').addEventListener('click', openAddModal);
-            document.getElementById('location-btn-mobile').addEventListener('click', centerMap);
+            document.getElementById('location-btn-mobile').addEventListener('click', centerToCartier);
             document.getElementById('gps-btn').addEventListener('click', getUserLocation);
+            document.getElementById('center-btn').addEventListener('click', centerToCartier);
             document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
         }
         
-        function centerMap() {
-            if (clickedLocation) {
-                map.setView([clickedLocation.lat, clickedLocation.lng], 17);
-            } else {
-                map.setView([44.545593, 25.931531], 17);
-            }
+        // Funcție nouă pentru centrarea hărții pe Cartierul Tineri
+        function centerToCartier() {
+            map.setView(CARTIER_CENTER, 17);
+            showToast('🏠 Centrat pe Cartierul Tineri');
         }
         
         function getUserLocation() {
@@ -1127,7 +1177,7 @@
         }
         
         function initMap() {
-            map = L.map('map').setView([44.545593, 25.931531], 17);
+            map = L.map('map').setView(CARTIER_CENTER, 17);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
