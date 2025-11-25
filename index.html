@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
     <style>
+        /* CSS-ul rămâne neschimbat, deoarece este deja bine structurat */
         * {
             margin: 0;
             padding: 0;
@@ -932,7 +933,8 @@
             appId: "1:386078081254:web:8625f492e1a110fa257b27"
         };
         
-        const ADMIN_PASSWORD = window.ADMIN_PASSWORD || 'colind2025';
+        // Parola de admin - ar trebui să fie gestionată mai sigur în producție
+        const ADMIN_PASSWORD = 'colind2025';
         const ICONS = ['🎄', '🍬', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️'];
         
         // Lista strazilor predefinite - în ordine alfabetică
@@ -957,6 +959,7 @@
             "Ulmului"
         ].sort();
         
+        // Variabile globale
         let map;
         let markers = [];
         let pins = [];
@@ -966,6 +969,7 @@
         let isConnected = false;
         let userLocationMarker = null;
         
+        // Inițializare aplicație
         document.addEventListener('DOMContentLoaded', init);
         
         function init() {
@@ -1210,8 +1214,20 @@
             input.required = true;
             input.autocomplete = 'off';
             
+            // Adaugă validare pentru a verifica dacă strada este din listă
+            input.addEventListener('change', function() {
+                validateStreetInput(this);
+            });
+            
             container.appendChild(input);
             container.appendChild(datalist);
+        }
+        
+        function validateStreetInput(inputElement) {
+            const value = inputElement.value.trim();
+            if (value && !PREDEFINED_STREETS.includes(value)) {
+                showToast('⚠️ Strada nu se află în lista străzilor din Cartierul Tineri. Verifică dacă ai scris corect.', 'error');
+            }
         }
         
         function selectIcon(icon) {
