@@ -73,6 +73,13 @@
             font-weight: 600;
             font-size: 0.875rem;
             white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #pin-count:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
         }
         
         #instructions {
@@ -359,7 +366,7 @@
             left: 50%;
             transform: translateX(-50%);
             width: 90vw;
-            max-width: 400px;
+            max-width: 500px;
         }
         
         .modal-add {
@@ -370,6 +377,14 @@
         .modal-view {
             top: 50%;
             transform: translate(-50%, -50%);
+            max-width: 450px;
+        }
+        
+        .modal-list {
+            top: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 500px;
+            max-height: 70vh;
         }
         
         .modal-header {
@@ -524,6 +539,28 @@
             padding: 0 1.25rem;
         }
         
+        .pin-info {
+            flex: 1;
+        }
+        
+        .pin-schedule {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 0.75rem;
+            margin: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+        }
+        
+        .pin-notes {
+            background: #fafafa;
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            margin: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+        
         .divider {
             border-top: 1px solid #e5e7eb;
             margin: 1rem 1.25rem;
@@ -552,6 +589,63 @@
         
         .icon-delete:hover {
             background: #fee2e2;
+        }
+        
+        /* LISTA CASE */
+        .list-container {
+            padding: 0 1.25rem 1.25rem;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.2s;
+        }
+        
+        .list-item:hover {
+            background: #f9fafb;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .list-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .list-family {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .list-address {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .list-schedule {
+            font-size: 0.75rem;
+            color: #059669;
+            margin-top: 0.25rem;
+        }
+        
+        .empty-list {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
         }
         
         #loading {
@@ -761,6 +855,10 @@
                 padding: 0.6rem 1rem;
                 font-size: 0.7rem;
             }
+            
+            .modal {
+                width: 95vw;
+            }
         }
         
         /* Afișează butonul PC pe desktop */
@@ -817,7 +915,7 @@
                     <p>Cartier Tineri, Buftea - Click pe hartă sau folosește GPS-ul să adaugi casa!</p>
                 </div>
             </div>
-            <div id="pin-count">
+            <div id="pin-count" title="Click pentru lista caselor">
                 <span id="pin-count-text">0 case</span>
             </div>
         </div>
@@ -988,6 +1086,21 @@
             </div>
         </div>
         
+        <!-- Modal lista case -->
+        <div id="list-modal" class="modal modal-list hidden">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span style="font-size: 1.5rem;">📋</span>
+                    Lista Caselor
+                </h3>
+                <button class="close-btn" onclick="closeListModal()">×</button>
+            </div>
+            
+            <div class="list-container" id="list-container">
+                <!-- Aici se vor afișa casele -->
+            </div>
+        </div>
+        
         <div id="loading">
             <div style="text-align: center;">
                 <div class="spinner"></div>
@@ -1011,33 +1124,17 @@
         const ADMIN_PASSWORD = 'colind2025';
         const ICONS = ['🎄', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️', '🦌', '🧦', '🍪', '🤶', '✨'];
         
+        // STRĂZI CORECTATE - Salviei în loc de Salbiei
         const PREDEFINED_STREETS = [
-            "Catinei",
-            "Ciocarliei",
-            "Codrului",
-            "Dafinului",
-            "Dropiei",
-            "Frasinului",
-            "Gutuiului",
-            "Lujerului",
-            "Macesului",
-            "Magnoliei",
-            "Mesteacanului",
-            "Nuferilor",
-            "Porumbacului",
-            "Salbiei",
-            "Salciei",
-            "Trestiei",
-            "Trifoiului",
-            "Ulmului"
+            "Catinei", "Ciocarliei", "Codrului", "Dafinului", "Dropiei", 
+            "Frasinului", "Gutuiului", "Lujerului", "Macesului", "Magnoliei",
+            "Mesteacanului", "Nuferilor", "Porumbacului", "Salviei", "Salciei",
+            "Trestiei", "Trifoiului", "Ulmului"
         ].sort();
         
-        // === ZONA CARTIERUL TINERI - COORDONATE CORECTATE ===
         const ZONE_BOUNDS = [
-            [44.548509, 25.932824], // Nord-Est
-            [44.545532, 25.927008], // Nord-Vest  
-            [44.542515, 25.930210], // Sud-Vest
-            [44.545553, 25.935854]  // Sud-Est
+            [44.548509, 25.932824], [44.545532, 25.927008],  
+            [44.542515, 25.930210], [44.545553, 25.935854]
         ];
         
         const CARTIER_CENTER = [44.545593, 25.931531];
@@ -1081,19 +1178,25 @@
             document.getElementById('center-btn').addEventListener('click', centerToCartier);
             document.getElementById('share-btn').addEventListener('click', shareOnWhatsApp);
             document.getElementById('share-btn-mobile').addEventListener('click', shareOnWhatsApp);
+            document.getElementById('pin-count').addEventListener('click', showListModal);
             document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
         }
-        // === FUNCȚIE SHARE WHATSAPP CORECTATĂ ===
+        
+        // === FUNCȚIE SHARE WHATSAPP ===
         function shareOnWhatsApp() {
-            const text = `🎄 Colindători Bine Veniți în Cartierul Tineri, Buftea! 🎅\n\n` +
-                        `Harta cu casele care primesc colindători.\n` +
-                        `Adaugă și casa ta: ${window.location.href}`;
+            const text = '🎄 Colindatori Bine Veniti! 🎅\n\nHarta caselor care primesc colindatori.\nAdauga si casa ta: ' + window.location.href;
             
-            // Folosește encodeURIComponent pentru a codifica corect emoji-urile
-            const encodedText = encodeURIComponent(text);
-            const whatsappUrl = `https://wa.me/?text=${encodedText}`;
-            
-            window.open(whatsappUrl, '_blank');
+            // Folosește API-ul nativ de share dacă e disponibil (pe mobil)
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Colindatori Buftea',
+                    text: text
+                }).catch(err => console.log('Share error:', err));
+            } else {
+                // Fallback pentru desktop
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(whatsappUrl, '_blank');
+            }
         }
         
         function centerToCartier() {
@@ -1382,6 +1485,58 @@
         function closeAllModals() {
             hideModal('add-modal');
             hideModal('view-modal');
+            hideModal('list-modal');
+        }
+        
+        // === MODAL LISTA CASE ===
+        function showListModal() {
+            if (pins.length === 0) {
+                showToast('📭 Nu există case încă adăugate!', 'error');
+                return;
+            }
+            
+            // Sortează casele după stradă și număr
+            const sortedPins = [...pins].sort((a, b) => {
+                const streetCompare = a.address.localeCompare(b.address);
+                if (streetCompare !== 0) return streetCompare;
+                return a.streetNumber.localeCompare(b.streetNumber);
+            });
+            
+            const listContainer = document.getElementById('list-container');
+            listContainer.innerHTML = '';
+            
+            if (sortedPins.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-list">
+                        <p>📭 Nu există case încă adăugate!</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Fii primul care adaugă casa!</p>
+                    </div>
+                `;
+            } else {
+                sortedPins.forEach(pin => {
+                    const listItem = document.createElement('div');
+                    listItem.className = 'list-item';
+                    listItem.innerHTML = `
+                        <div class="list-icon">${pin.icon || '🎄'}</div>
+                        <div class="list-details">
+                            <div class="list-family">${pin.name}</div>
+                            <div class="list-address">Str. ${pin.address}, Nr. ${pin.streetNumber}</div>
+                            ${pin.schedule ? `<div class="list-schedule">🕐 ${pin.schedule}</div>` : ''}
+                        </div>
+                    `;
+                    listItem.addEventListener('click', () => {
+                        closeListModal();
+                        showPin(pin);
+                    });
+                    listContainer.appendChild(listItem);
+                });
+            }
+            
+            showModal('list-modal');
+        }
+        
+        function closeListModal() {
+            hideModal('list-modal');
         }
         
         function handleSubmit(e) {
@@ -1549,8 +1704,8 @@
                     <div>
                         <h3 class="modal-title">${pin.name}</h3>
                         <p class="pin-detail">
-                            <span>🏠</span>
-                            ${addressText}
+                            <span>${pin.icon || '🎄'}</span>
+                            <span class="pin-info">${addressText}</span>
                         </p>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
@@ -1561,11 +1716,17 @@
             `;
             
             if (pin.schedule) {
-                html += `<p class="pin-detail"><span>🕐</span><span style="font-weight: 500;">${pin.schedule}</span></p>`;
+                html += `<div class="pin-schedule">
+                    <strong>🕐 Program preferat:</strong><br>
+                    ${pin.schedule}
+                </div>`;
             }
             
             if (pin.notes) {
-                html += `<div class="divider"><p style="font-size: 0.875rem; color: #6b7280;">${pin.notes}</p></div>`;
+                html += `<div class="pin-notes">
+                    <strong>📝 Detalii:</strong><br>
+                    ${pin.notes}
+                </div>`;
             }
             
             document.getElementById('view-content').innerHTML = html;
