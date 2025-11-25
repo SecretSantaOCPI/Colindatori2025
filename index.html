@@ -1083,14 +1083,13 @@
             document.getElementById('share-btn-mobile').addEventListener('click', shareOnWhatsApp);
             document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
         }
-        
-        // === FUNCȚIE SHARE WHATSAPP ===
+        // === FUNCȚIE SHARE WHATSAPP CORECTATĂ ===
         function shareOnWhatsApp() {
-            const pinCount = pins.length;
             const text = `🎄 Colindători Bine Veniți în Cartierul Tineri, Buftea! 🎅\n\n` +
-                        `Harta cu ${pinCount} case care primesc colindători.\n` +
+                        `Harta cu casele care primesc colindători.\n` +
                         `Adaugă și casa ta: ${window.location.href}`;
             
+            // Folosește encodeURIComponent pentru a codifica corect emoji-urile
             const encodedText = encodeURIComponent(text);
             const whatsappUrl = `https://wa.me/?text=${encodedText}`;
             
