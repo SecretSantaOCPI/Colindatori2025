@@ -181,29 +181,7 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
         
-        #location-btn-mobile {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            transition: all 0.3s ease;
-        }
-        
-        #location-btn-mobile:hover {
-            transform: scale(1.1);
-            background: #2563eb;
-        }
-
-        /* BUTON CENTRARE HARTĂ - MUTAT ÎN PARTEA DE JOS */
+        /* BUTON CENTRARE UNIC - VIZIBIL PE TOATE DISPOZITIVELE */
         #center-btn {
             position: fixed;
             bottom: 90px;
@@ -232,7 +210,7 @@
             background: #7c3aed;
         }
 
-        /* BUTON GPS PENTRU LOCALIZARE - MUTAT ÎN PARTEA DE JOS */
+        /* BUTON GPS PENTRU LOCALIZARE */
         #gps-btn {
             position: fixed;
             bottom: 20px;
@@ -816,13 +794,13 @@
             Adaugă Casa Mea
         </button>
         
-        <!-- Buton centrare hartă - MUTAT ÎN PARTEA DE JOS -->
+        <!-- Buton centrare hartă UNIC - VIZIBIL PE TOATE DISPOZITIVELE -->
         <button id="center-btn" title="Centrare hartă pe Cartierul Tineri">
             <span style="font-size: 1.2rem;">🏠</span>
             Centrare Hartă
         </button>
         
-        <!-- Buton GPS pentru localizare - MUTAT ÎN PARTEA DE JOS -->
+        <!-- Buton GPS pentru localizare -->
         <button id="gps-btn" title="Folosește locația ta actuală">
             <span style="font-size: 1.2rem;">📍</span>
             Locația Mea
@@ -830,9 +808,6 @@
         
         <!-- Butoane mobile -->
         <div id="mobile-controls">
-            <button id="location-btn-mobile" title="Centrare hartă">
-                🎯
-            </button>
             <button id="add-btn-mobile" title="Adaugă casă">
                 +
             </button>
@@ -1035,7 +1010,6 @@
         function setupEventListeners() {
             document.getElementById('add-btn-pc').addEventListener('click', openAddModal);
             document.getElementById('add-btn-mobile').addEventListener('click', openAddModal);
-            document.getElementById('location-btn-mobile').addEventListener('click', centerToCartier);
             document.getElementById('gps-btn').addEventListener('click', getUserLocation);
             document.getElementById('center-btn').addEventListener('click', centerToCartier);
             document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
