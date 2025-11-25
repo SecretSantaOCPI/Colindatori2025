@@ -203,6 +203,35 @@
             background: #2563eb;
         }
 
+        /* BUTON CENTRARE HARTĂ - MUTAT ÎN PARTEA DE JOS */
+        #center-btn {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            z-index: 1000;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        #center-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: #7c3aed;
+        }
+
         /* BUTON GPS PENTRU LOCALIZARE - MUTAT ÎN PARTEA DE JOS */
         #gps-btn {
             position: fixed;
@@ -242,36 +271,7 @@
             background: #f59e0b;
         }
 
-        /* BUTON CENTRARE HARTĂ */
-        #center-btn {
-            position: fixed;
-            top: 120px;
-            left: 20px;
-            z-index: 1000;
-            background: #8b5cf6;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-        
-        #center-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            background: #7c3aed;
-        }
-
-        /* STILURI BUTOANE MODALE - RESTABILITE */
+        /* STILURI BUTOANE MODALE */
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -406,7 +406,6 @@
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
         
-        /* Stil special pentru input-ul cu datalist */
         .street-input {
             width: 100%;
             padding: 0.75rem;
@@ -563,7 +562,6 @@
             bottom: 0;
         }
         
-        /* BRAD ANIMAT PENTRU CONEXIUNE - REPOZITIONAT */
         .connection-status {
             position: fixed;
             top: 120px;
@@ -682,7 +680,6 @@
             }
         }
         
-        /* Overlay pentru modale */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -719,15 +716,15 @@
                 display: flex;
             }
             
-            #gps-btn {
-                bottom: 10px;
+            #center-btn {
+                bottom: 80px;
                 left: 10px;
                 padding: 10px 16px;
                 font-size: 13px;
             }
             
-            #center-btn {
-                top: 110px;
+            #gps-btn {
+                bottom: 10px;
                 left: 10px;
                 padding: 10px 16px;
                 font-size: 13px;
@@ -766,14 +763,13 @@
                 font-size: 0.875rem;
             }
             
-            /* Pe desktop, bradul este sub butonul Adaugă Casa */
             .connection-status {
                 top: 180px;
                 right: 30px;
             }
             
             #center-btn {
-                top: 180px;
+                bottom: 90px;
                 left: 30px;
             }
             
@@ -814,13 +810,13 @@
             <div id="map"></div>
         </div>
         
-        <!-- BUTON PC - ACUM ÎN AFARA CONTAINERULUI HĂRȚII -->
+        <!-- BUTON PC -->
         <button id="add-btn-pc" class="hidden">
             <span style="font-size: 1.5rem; font-weight: bold;">+</span>
             Adaugă Casa Mea
         </button>
         
-        <!-- Buton centrare hartă -->
+        <!-- Buton centrare hartă - MUTAT ÎN PARTEA DE JOS -->
         <button id="center-btn" title="Centrare hartă pe Cartierul Tineri">
             <span style="font-size: 1.2rem;">🏠</span>
             Centrare Hartă
@@ -842,7 +838,7 @@
             </button>
         </div>
         
-        <!-- Brad animat pentru status conexiune - REPOZITIONAT -->
+        <!-- Brad animat pentru status conexiune -->
         <div id="connection-status" class="connection-status hidden">
             <div class="christmas-tree">
                 <div class="tree-top">🎄</div>
@@ -979,13 +975,9 @@
             appId: "1:386078081254:web:8625f492e1a110fa257b27"
         };
         
-        // Parola de admin - ar trebui să fie gestionată mai sigur în producție
         const ADMIN_PASSWORD = 'colind2025';
-        
-        // Iconițe extinse cu 4 noi opțiuni
         const ICONS = ['🎄', '🍬', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️', '🦌', '🧦', '🌟', '🤶'];
         
-        // Lista strazilor predefinite - în ordine alfabetică
         const PREDEFINED_STREETS = [
             "Catinei",
             "Ciocarliei",
@@ -1007,10 +999,8 @@
             "Ulmului"
         ].sort();
         
-        // Coordonatele centrale pentru Cartierul Tineri, Buftea
         const CARTIER_CENTER = [44.545593, 25.931531];
         
-        // Variabile globale
         let map;
         let markers = [];
         let pins = [];
@@ -1020,7 +1010,6 @@
         let isConnected = false;
         let userLocationMarker = null;
         
-        // Inițializare aplicație
         document.addEventListener('DOMContentLoaded', init);
         
         function init() {
@@ -1052,7 +1041,6 @@
             document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
         }
         
-        // Funcție nouă pentru centrarea hărții pe Cartierul Tineri
         function centerToCartier() {
             map.setView(CARTIER_CENTER, 17);
             showToast('🏠 Centrat pe Cartierul Tineri');
@@ -1071,21 +1059,17 @@
             }
             
             navigator.geolocation.getCurrentPosition(
-                // Success callback
                 function(position) {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     const accuracy = position.coords.accuracy;
                     
-                    // Setează locația selectată
                     clickedLocation = { lat, lng };
                     
-                    // Elimină markerul anterior dacă există
                     if (userLocationMarker) {
                         userLocationMarker.remove();
                     }
                     
-                    // Adaugă marker pentru locația utilizatorului
                     userLocationMarker = L.marker([lat, lng], {
                         icon: L.divIcon({
                             html: '<div style="font-size: 48px; animation: pulse 1s infinite; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); color: #3b82f6;">📍</div>',
@@ -1095,22 +1079,17 @@
                         })
                     }).addTo(map);
                     
-                    // Centrare hartă pe locația utilizatorului
                     map.setView([lat, lng], 17);
                     
-                    // Afișează mesaj de succes
                     showToast(`✅ Locație găsită! Precizie: ${Math.round(accuracy)} metri`, 'success');
                     
-                    // Actualizează butonul
                     gpsBtn.innerHTML = '<span style="font-size: 1.2rem;">✅</span> Găsit!';
                     setTimeout(resetGpsButton, 2000);
                     
-                    // Dacă modalul este deschis, actualizează statusul locației
                     if (!document.getElementById('add-modal').classList.contains('hidden')) {
                         document.getElementById('location-success').classList.remove('hidden');
                     }
                 },
-                // Error callback
                 function(error) {
                     let errorMessage = 'Eroare la obținerea locației: ';
                     switch(error.code) {
@@ -1130,7 +1109,6 @@
                     showToast(errorMessage, 'error');
                     resetGpsButton();
                 },
-                // Options
                 {
                     enableHighAccuracy: true,
                     timeout: 10000,
@@ -1244,7 +1222,6 @@
             const container = document.getElementById('street-container');
             container.innerHTML = '';
             
-            // Creează datalist-ul cu toate străzile
             const datalist = document.createElement('datalist');
             datalist.id = 'streets-list';
             
@@ -1254,7 +1231,6 @@
                 datalist.appendChild(option);
             });
             
-            // Creează input-ul care folosește datalist-ul
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'street-input';
@@ -1264,7 +1240,6 @@
             input.required = true;
             input.autocomplete = 'off';
             
-            // Adaugă validare pentru a verifica dacă strada este din listă
             input.addEventListener('change', function() {
                 validateStreetInput(this);
             });
@@ -1367,7 +1342,7 @@
                 return;
             }
             showModal('add-modal');
-            initStreetInput(); // Resetează input-ul de stradă
+            initStreetInput();
         }
         
         function closeAddModal() {
@@ -1377,7 +1352,7 @@
             clickedLocation = null;
             selectedIcon = '🎄';
             initIconGrid();
-            initStreetInput(); // Resetează input-ul de stradă
+            initStreetInput();
             
             if (window.tempMarker) {
                 window.tempMarker.remove();
