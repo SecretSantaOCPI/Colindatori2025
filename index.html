@@ -1520,15 +1520,11 @@
                     className: 'custom-tooltip-container'
                 });
                 
-                // MODIFICARE: Dacă ești admin, click-ul direct pe marker bifează/debifează
-                if (isAdmin) {
-                    marker.on('click', () => {
-                        toggleVisited(pin.id);
-                        closeViewModal(); // Închide modalul dacă este deschis
-                    });
-                } else {
-                    marker.on('click', () => showPin(pin));
-                }
+                // MODIFICARE: Toți utilizatorii pot bifa direct
+                marker.on('click', () => {
+                    toggleVisited(pin.id);
+                    closeViewModal(); // Închide modalul dacă este deschis
+                });
                 
                 markers.push(marker);
             });
@@ -1606,58 +1602,39 @@
             hideModal('admin-login-modal');
         }
         
-   // === SISTEM TRACKING VIZITE ===
-function toggleVisited(houseId) {
-    // AI FOST: Verificare admin (acum scoasă)
-    // if (!isAdmin) {
-    //     showToast('❌ Doar administratorul poate marca casele vizitate!', 'error');
-    //     return;
-    // }
-    
-    // ACUM: Bifează direct fără restricții
-    if (visitedHouses[houseId]) {
-        delete visitedHouses[houseId];
-        showToast('✅ Casă marcată ca nevizitată');
-    } else {
-        visitedHouses[houseId] = true;
-        showToast('✅ Casă marcată ca vizitată');
-    }
-    
-    localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
-    updateMap(); // Actualizează direct harta
-    updatePinCount();
-    
-    // Actualizează lista dacă este deschisă
-    if (!document.getElementById('list-modal').classList.contains('hidden')) {
-        showListModal();
-    }
-}
-
-function resetAllVisited() {
-    // PĂSTRAT doar pentru reset (doar admin)
-    if (!isAdmin) {
-        showToast('❌ Nu ai permisiunea de a reseta vizitele!', 'error');
-        return;
-    }
-    
-    visitedHouses = {};
-    localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
-    updateMap();
-    updatePinCount();
-    
-    if (!document.getElementById('list-modal').classList.contains('hidden')) {
-        showListModal();
-    }
-    
-    showToast('✅ Toate vizitele au fost resetate!', 'success');
-}
+        // === SISTEM TRACKING VIZITE ===
+        function toggleVisited(houseId) {
+            // MODIFICARE: Fără restricție de admin - toată lumea poate bifa
+            if (visitedHouses[houseId]) {
+                delete visitedHouses[houseId];
+                showToast('✅ Casă marcată ca nevizitată');
+            } else {
+                visitedHouses[houseId] = true;
+                showToast('✅ Casă marcată ca vizitată');
+            }
+            
+            localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+            updateMap(); // Actualizează direct harta
+            updatePinCount();
+            
+            // Actualizează lista dacă este deschisă
+            if (!document.getElementById('list-modal').classList.contains('hidden')) {
+                showListModal();
+            }
+        }
+        
+        function resetAllVisited() {
+            // PĂSTRAT doar pentru reset (doar admin)
+            if (!isAdmin) {
+                showToast('❌ Nu ai permisiunea de a reseta vizitele!', 'error');
+                return;
+            }
             
             visitedHouses = {};
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
             updateMap();
             updatePinCount();
             
-            // Actualizează lista dacă este deschisă
             if (!document.getElementById('list-modal').classList.contains('hidden')) {
                 showListModal();
             }
@@ -1683,9 +1660,6 @@ function resetAllVisited() {
                 document.getElementById('reset-btn').disabled = false;
                 closeAdminLogin();
                 showToast('✅ Login admin reușit!', 'success');
-                
-                // Reîncarcă harta cu noile funcționalități admin
-                updateMap();
                 
                 // Reîncarcă lista dacă este deschisă
                 if (!document.getElementById('list-modal').classList.contains('hidden')) {
@@ -1726,15 +1700,13 @@ function resetAllVisited() {
                     const listItem = document.createElement('div');
                     listItem.className = `list-item ${isVisited ? 'visited' : ''}`;
                     
-                    let adminControls = '';
-                    if (isAdmin) {
-                        adminControls = `
-                            <div class="checkbox-container">
-                                <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
-                                <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat aici</span>
-                            </div>
-                        `;
-                    }
+                    // MODIFICARE: Checkbox-ul apare pentru toți, nu doar admin
+                    const adminControls = `
+                        <div class="checkbox-container">
+                            <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
+                            <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat aici</span>
+                        </div>
+                    `;
                     
                     listItem.innerHTML = `
                         <div class="list-icon">${isVisited ? '✅' : (pin.icon || '🎄')}</div>
@@ -1948,15 +1920,13 @@ function resetAllVisited() {
                 </div>`;
             }
             
-            // Adaugă buton pentru marcare vizită (doar pentru admin)
-            if (isAdmin) {
-                html += `
-                    <div class="checkbox-container" style="margin: 1rem 1.25rem;">
-                        <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
-                        <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat la această casă</span>
-                    </div>
-                `;
-            }
+            // MODIFICARE: Butonul de marcare apare pentru toți
+            html += `
+                <div class="checkbox-container" style="margin: 1rem 1.25rem;">
+                    <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
+                    <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat la această casă</span>
+                </div>
+            `;
             
             document.getElementById('view-content').innerHTML = html;
             showModal('view-modal');
