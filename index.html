@@ -120,68 +120,8 @@
             height: 100%;
         }
         
-        /* BUTON PC */
-        #add-btn-pc {
-            position: fixed;
-            top: 120px;
-            right: 20px;
-            z-index: 1000;
-            background: linear-gradient(135deg, #dc2626, #16a34a);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 700;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        }
-        
-        #add-btn-pc:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-            background: linear-gradient(135deg, #b91c1c, #15803d);
-        }
-        
-        /* BUTON SHARE WHATSAPP */
-        #share-btn {
-            position: fixed;
-            top: 180px;
-            right: 20px;
-            z-index: 1000;
-            background: #25d366;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 700;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        }
-        
-        #share-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-            background: #128C7E;
-        }
-        
-        /* BUTOANE FIXATE PE MOBIL */
-        #mobile-controls {
+        /* GRUP BUTOANE DREAPTA - PC & MOBIL */
+        #right-controls {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -191,7 +131,8 @@
             gap: 12px;
         }
         
-        #add-btn-mobile {
+        /* BUTON ADAUGA CASA - DREAPTA */
+        #add-btn-right {
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -205,93 +146,88 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1001;
             transition: all 0.3s ease;
         }
         
-        #add-btn-mobile:hover {
+        #add-btn-right:hover {
             transform: scale(1.1);
             box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
 
-        /* BUTON SHARE MOBILE */
-        #share-btn-mobile {
-            width: 50px;
-            height: 50px;
+        /* BUTON SHARE - DREAPTA */
+        #share-btn-right {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: #25d366;
             color: white;
             border: none;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 24px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1001;
             transition: all 0.3s ease;
         }
         
-        #share-btn-mobile:hover {
+        #share-btn-right:hover {
             transform: scale(1.1);
             background: #128C7E;
         }
         
-        /* BUTON CENTRARE UNIC */
-        #center-btn {
-            position: fixed;
-            bottom: 90px;
-            left: 20px;
-            z-index: 1000;
-            background: #8b5cf6;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-        
-        #center-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            background: #7c3aed;
-        }
-
-        /* BUTON GPS */
-        #gps-btn {
+        /* GRUP BUTOANE STANGA */
+        #left-controls {
             position: fixed;
             bottom: 20px;
             left: 20px;
             z-index: 1000;
-            background: #10b981;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* BUTON CENTRARE STANGA */
+        #center-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #8b5cf6;
             color: white;
             border: none;
-            border-radius: 50px;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 24px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        #center-btn:hover {
+            transform: scale(1.1);
+            background: #7c3aed;
+        }
+
+        /* BUTON GPS STANGA */
+        #gps-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #10b981;
+            color: white;
+            border: none;
+            font-size: 24px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
         
         #gps-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            transform: scale(1.1);
             background: #059669;
         }
         
@@ -749,6 +685,7 @@
             bottom: 0;
         }
         
+        /* BRAD ANIMAT - FIXAT PE TOATE DISPOZITIVELE */
         .connection-status {
             position: fixed;
             top: 120px;
@@ -878,7 +815,7 @@
             backdrop-filter: blur(4px);
         }
         
-        /* Pe mobil, poziționare mai compactă */
+        /* Pe mobil, ajustări de poziționare */
         @media (max-width: 767px) {
             .connection-status {
                 top: 110px;
@@ -895,28 +832,6 @@
                 height: 6px;
             }
             
-            #add-btn-pc, #share-btn {
-                display: none !important;
-            }
-            
-            #mobile-controls {
-                display: flex;
-            }
-            
-            #center-btn {
-                bottom: 80px;
-                left: 10px;
-                padding: 10px 16px;
-                font-size: 13px;
-            }
-            
-            #gps-btn {
-                bottom: 10px;
-                left: 10px;
-                padding: 10px 16px;
-                font-size: 13px;
-            }
-            
             #instructions {
                 padding: 0.6rem 1rem;
                 font-size: 0.7rem;
@@ -925,18 +840,22 @@
             .modal {
                 width: 95vw;
             }
+            
+            #left-controls, #right-controls {
+                bottom: 10px;
+            }
+            
+            #left-controls {
+                left: 10px;
+            }
+            
+            #right-controls {
+                right: 10px;
+            }
         }
         
-        /* Afișează butonul PC pe desktop */
+        /* Pe desktop, bradul mai sus */
         @media (min-width: 768px) {
-            #add-btn-pc, #share-btn {
-                display: flex !important;
-            }
-            
-            #mobile-controls {
-                display: none;
-            }
-            
             #header p {
                 display: block;
             }
@@ -955,18 +874,8 @@
             }
             
             .connection-status {
-                top: 180px;
+                top: 140px;
                 right: 30px;
-            }
-            
-            #center-btn {
-                bottom: 90px;
-                left: 30px;
-            }
-            
-            #gps-btn {
-                bottom: 30px;
-                left: 30px;
             }
         }
     </style>
@@ -1001,36 +910,22 @@
             <div id="map"></div>
         </div>
         
-        <!-- BUTON PC -->
-        <button id="add-btn-pc" class="hidden">
-            <span style="font-size: 1.5rem; font-weight: bold;">+</span>
-            Adaugă Casa Mea
-        </button>
+        <!-- BUTOANE STANGA -->
+        <div id="left-controls">
+            <button id="center-btn" title="Centrare hartă pe Cartierul Tineri">
+                🏠
+            </button>
+            <button id="gps-btn" title="Folosește locația ta actuală">
+                📍
+            </button>
+        </div>
         
-        <!-- BUTON SHARE WHATSAPP -->
-        <button id="share-btn" class="hidden">
-            <span style="font-size: 1.5rem;">📱</span>
-            Share pe WhatsApp
-        </button>
-        
-        <!-- Buton centrare hartă -->
-        <button id="center-btn" title="Centrare hartă pe Cartierul Tineri">
-            <span style="font-size: 1.2rem;">🏠</span>
-            Centrare Hartă
-        </button>
-        
-        <!-- Buton GPS -->
-        <button id="gps-btn" title="Folosește locația ta actuală">
-            <span style="font-size: 1.2rem;">📍</span>
-            Locația Mea
-        </button>
-        
-        <!-- Butoane mobile -->
-        <div id="mobile-controls">
-            <button id="share-btn-mobile" title="Share pe WhatsApp">
+        <!-- BUTOANE DREAPTA -->
+        <div id="right-controls">
+            <button id="share-btn-right" title="Share pe WhatsApp">
                 📱
             </button>
-            <button id="add-btn-mobile" title="Adaugă casă">
+            <button id="add-btn-right" title="Adaugă casă">
                 +
             </button>
         </div>
@@ -1162,7 +1057,7 @@
                 <button class="close-btn" onclick="closeListModal()">×</button>
             </div>
             
-            <div class="admin-controls" id="admin-controls">
+            <div class="admin-controls hidden" id="admin-controls">
                 <div class="admin-title">
                     <span>🔧</span>
                     Control Admin
@@ -1227,7 +1122,7 @@
             appId: "1:386078081254:web:8625f492e1a110fa257b27"
         };
         
-        const ADMIN_PASSWORD = 'colind2025';
+        const ADMIN_PASSWORD = 'colind2024';
         const ICONS = ['🎄', '🎅', '⭐', '🔔', '🎁', '❄️', '🕯️', '🦌', '🧦', '🍪', '🤶', '✨'];
         
         // STRĂZI CORECTATE - Salviei în loc de Salbiei
@@ -1265,27 +1160,13 @@
             initIconGrid();
             initStreetInput();
             setupEventListeners();
-            checkScreenSize();
-            
-            window.addEventListener('resize', checkScreenSize);
-        }
-        
-        function checkScreenSize() {
-            const addBtnPc = document.getElementById('add-btn-pc');
-            if (window.innerWidth >= 768) {
-                addBtnPc.classList.remove('hidden');
-            } else {
-                addBtnPc.classList.add('hidden');
-            }
         }
         
         function setupEventListeners() {
-            document.getElementById('add-btn-pc').addEventListener('click', openAddModal);
-            document.getElementById('add-btn-mobile').addEventListener('click', openAddModal);
+            document.getElementById('add-btn-right').addEventListener('click', openAddModal);
             document.getElementById('gps-btn').addEventListener('click', getUserLocation);
             document.getElementById('center-btn').addEventListener('click', centerToCartier);
-            document.getElementById('share-btn').addEventListener('click', shareOnWhatsApp);
-            document.getElementById('share-btn-mobile').addEventListener('click', shareOnWhatsApp);
+            document.getElementById('share-btn-right').addEventListener('click', shareOnWhatsApp);
             document.getElementById('pin-count').addEventListener('click', showListModal);
             document.getElementById('modal-overlay').addEventListener('click', closeAllModals);
         }
@@ -1473,7 +1354,6 @@
             
             if (isConnected) {
                 statusElement.className = 'connection-status connected';
-                showToast('✅ Conectat la baza de date', 'success');
             } else {
                 statusElement.className = 'connection-status disconnected';
             }
@@ -1505,7 +1385,7 @@
             
             pins.forEach(pin => {
                 const isVisited = visitedHouses[pin.id];
-                const icon = isVisited ? '✅' : (pin.icon || '🎄');
+                const icon = pin.icon || '🎄';
                 const marker = L.marker([pin.lat, pin.lng], {
                     icon: L.divIcon({
                         html: `<div style="font-size: 42px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); transform: translateY(-5px);">${icon}</div>`,
@@ -1515,7 +1395,7 @@
                     })
                 }).addTo(map);
                 
-                const tooltipText = `<strong>${pin.name}</strong><br>Str. ${pin.address}, Nr. ${pin.streetNumber}${isVisited ? '<br>✅ Vizitată' : ''}`;
+                const tooltipText = `<strong>${pin.name}</strong><br>Str. ${pin.address}, Nr. ${pin.streetNumber}`;
                 marker.bindTooltip(tooltipText, {
                     direction: 'top',
                     offset: [0, -40],
@@ -1531,7 +1411,7 @@
             const count = pins.length;
             const visitedCount = Object.keys(visitedHouses).length;
             const text = count === 1 ? 'casă' : 'case';
-            document.getElementById('pin-count-text').textContent = `${count} ${text} (${visitedCount} vizitate)`;
+            document.getElementById('pin-count-text').textContent = `${count} ${text}`;
         }
         
         function showError(message) {
@@ -1600,6 +1480,11 @@
         
         // === SISTEM TRACKING VIZITE ===
         function toggleVisited(houseId) {
+            if (!isAdmin) {
+                showToast('❌ Doar administratorul poate marca casele vizitate!', 'error');
+                return;
+            }
+            
             if (visitedHouses[houseId]) {
                 delete visitedHouses[houseId];
             } else {
@@ -1607,7 +1492,6 @@
             }
             
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
-            updateMap();
             updatePinCount();
             showListModal(); // Reîncarcă lista pentru a reflecta schimbările
         }
@@ -1620,7 +1504,6 @@
             
             visitedHouses = {};
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
-            updateMap();
             updatePinCount();
             showListModal();
             showToast('✅ Toate vizitele au fost resetate!', 'success');
@@ -1642,6 +1525,7 @@
             if (password === ADMIN_PASSWORD) {
                 isAdmin = true;
                 document.getElementById('reset-btn').disabled = false;
+                document.getElementById('admin-controls').classList.remove('hidden');
                 closeAdminLogin();
                 showToast('✅ Login admin reușit!', 'success');
             } else {
@@ -1678,17 +1562,25 @@
                     const isVisited = visitedHouses[pin.id];
                     const listItem = document.createElement('div');
                     listItem.className = `list-item ${isVisited ? 'visited' : ''}`;
+                    
+                    let adminControls = '';
+                    if (isAdmin) {
+                        adminControls = `
+                            <div class="checkbox-container">
+                                <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
+                                <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat aici</span>
+                            </div>
+                        `;
+                    }
+                    
                     listItem.innerHTML = `
-                        <div class="list-icon">${isVisited ? '✅' : (pin.icon || '🎄')}</div>
+                        <div class="list-icon">${pin.icon || '🎄'}</div>
                         <div class="list-details">
                             <div class="list-family">${pin.name}</div>
                             <div class="list-address">Str. ${pin.address}, Nr. ${pin.streetNumber}</div>
                             ${pin.schedule ? `<div class="list-schedule">🕐 ${pin.schedule}</div>` : ''}
                             ${pin.notes ? `<div class="list-notes">📝 ${pin.notes}</div>` : ''}
-                            <div class="checkbox-container">
-                                <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
-                                <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat aici</span>
-                            </div>
+                            ${adminControls}
                         </div>
                     `;
                     listContainer.appendChild(listItem);
@@ -1777,7 +1669,7 @@
             const gpsBtn = document.getElementById('gps-btn');
             gpsBtn.disabled = true;
             gpsBtn.classList.add('loading');
-            gpsBtn.innerHTML = '<span style="font-size: 1.2rem;">⏳</span> Se localizează...';
+            gpsBtn.innerHTML = '⏳';
             
             if (!navigator.geolocation) {
                 showToast('Geolocația nu este suportată de browser-ul tău', 'error');
@@ -1817,7 +1709,7 @@
                     
                     showToast(`✅ Locație găsită! Precizie: ${Math.round(accuracy)} metri`, 'success');
                     
-                    gpsBtn.innerHTML = '<span style="font-size: 1.2rem;">✅</span> Găsit!';
+                    gpsBtn.innerHTML = '✅';
                     setTimeout(resetGpsButton, 2000);
                     
                     if (!document.getElementById('add-modal').classList.contains('hidden')) {
@@ -1855,20 +1747,19 @@
             const gpsBtn = document.getElementById('gps-btn');
             gpsBtn.disabled = false;
             gpsBtn.classList.remove('loading');
-            gpsBtn.innerHTML = '<span style="font-size: 1.2rem;">📍</span> Locația Mea';
+            gpsBtn.innerHTML = '📍';
         }
         
         function showPin(pin) {
             selectedPin = pin;
-            const isVisited = visitedHouses[pin.id];
             const addressText = `Str. ${pin.address}, Nr. ${pin.streetNumber}`;
             
             let html = `
                 <div class="modal-header">
                     <div>
-                        <h3 class="modal-title">${pin.name} ${isVisited ? '✅' : ''}</h3>
+                        <h3 class="modal-title">${pin.name}</h3>
                         <p class="pin-detail">
-                            <span>${isVisited ? '✅' : (pin.icon || '🎄')}</span>
+                            <span>${pin.icon || '🎄'}</span>
                             <span class="pin-info">${addressText}</span>
                         </p>
                     </div>
@@ -1892,14 +1783,6 @@
                     ${pin.notes}
                 </div>`;
             }
-            
-            // Adaugă checkbox pentru tracking
-            html += `
-                <div class="checkbox-container" style="margin: 1rem 1.25rem;">
-                    <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
-                    <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat la această casă</span>
-                </div>
-            `;
             
             document.getElementById('view-content').innerHTML = html;
             showModal('view-modal');
