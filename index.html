@@ -1607,13 +1607,14 @@
         }
         
         // === SISTEM TRACKING VIZITE ===
-        function toggleVisited(houseId) {
-            if (!isAdmin) {
-                showToast('❌ Doar administratorul poate marca casele vizitate!', 'error');
-                return;
-            }
-            
-            if (visitedHouses[houseId]) {
+       // function toggleVisited(houseId) {
+          //  if (!isAdmin) {
+           //     showToast('❌ Doar administratorul poate marca casele vizitate!', 'error');
+           //     return;
+          //  }
+        // Devine:
+            function toggleVisited(houseId) {
+              if (visitedHouses[houseId]) {
                 delete visitedHouses[houseId];
                 showToast('✅ Casă marcată ca nevizitată');
             } else {
