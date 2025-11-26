@@ -1606,37 +1606,51 @@
             hideModal('admin-login-modal');
         }
         
-        // === SISTEM TRACKING VIZITE ===
-       // function toggleVisited(houseId) {
-          //  if (!isAdmin) {
-           //     showToast('❌ Doar administratorul poate marca casele vizitate!', 'error');
-           //     return;
-          //  }
-        // Devine:
-            function toggleVisited(houseId) {
-              if (visitedHouses[houseId]) {
-                delete visitedHouses[houseId];
-                showToast('✅ Casă marcată ca nevizitată');
-            } else {
-                visitedHouses[houseId] = true;
-                showToast('✅ Casă marcată ca vizitată');
-            }
-            
-            localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
-            updateMap(); // Actualizează direct harta
-            updatePinCount();
-            
-            // Actualizează lista dacă este deschisă
-            if (!document.getElementById('list-modal').classList.contains('hidden')) {
-                showListModal();
-            }
-        }
-        
-        function resetAllVisited() {
-            if (!isAdmin) {
-                showToast('❌ Nu ai permisiunea de a reseta vizitele!', 'error');
-                return;
-            }
+   // === SISTEM TRACKING VIZITE ===
+function toggleVisited(houseId) {
+    // AI FOST: Verificare admin (acum scoasă)
+    // if (!isAdmin) {
+    //     showToast('❌ Doar administratorul poate marca casele vizitate!', 'error');
+    //     return;
+    // }
+    
+    // ACUM: Bifează direct fără restricții
+    if (visitedHouses[houseId]) {
+        delete visitedHouses[houseId];
+        showToast('✅ Casă marcată ca nevizitată');
+    } else {
+        visitedHouses[houseId] = true;
+        showToast('✅ Casă marcată ca vizitată');
+    }
+    
+    localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+    updateMap(); // Actualizează direct harta
+    updatePinCount();
+    
+    // Actualizează lista dacă este deschisă
+    if (!document.getElementById('list-modal').classList.contains('hidden')) {
+        showListModal();
+    }
+}
+
+function resetAllVisited() {
+    // PĂSTRAT doar pentru reset (doar admin)
+    if (!isAdmin) {
+        showToast('❌ Nu ai permisiunea de a reseta vizitele!', 'error');
+        return;
+    }
+    
+    visitedHouses = {};
+    localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+    updateMap();
+    updatePinCount();
+    
+    if (!document.getElementById('list-modal').classList.contains('hidden')) {
+        showListModal();
+    }
+    
+    showToast('✅ Toate vizitele au fost resetate!', 'success');
+}
             
             visitedHouses = {};
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
