@@ -615,6 +615,11 @@
             border-bottom: none;
         }
         
+        .list-item.visited {
+            background: #f0fdf4;
+            opacity: 0.7;
+        }
+        
         .list-icon {
             font-size: 1.5rem;
             flex-shrink: 0;
@@ -640,6 +645,67 @@
             font-size: 0.75rem;
             color: #059669;
             margin-top: 0.25rem;
+        }
+        
+        .list-notes {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .checkbox.checked {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        
+        .checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .checkbox-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        
+        .admin-controls {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 1.25rem;
+        }
+        
+        .admin-title {
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .empty-list {
@@ -970,7 +1036,7 @@
         </div>
         
         <!-- Brad animat pentru status conexiune -->
-        <div id="connection-status" class="connection-status hidden">
+        <div id="connection-status" class="connection-status">
             <div class="christmas-tree">
                 <div class="tree-top">🎄</div>
                 <div class="lights">
@@ -1096,8 +1162,48 @@
                 <button class="close-btn" onclick="closeListModal()">×</button>
             </div>
             
+            <div class="admin-controls" id="admin-controls">
+                <div class="admin-title">
+                    <span>🔧</span>
+                    Control Admin
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button onclick="showAdminLogin()" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 1rem;">
+                        Login Admin
+                    </button>
+                    <button onclick="resetAllVisited()" class="btn btn-danger" style="font-size: 0.75rem; padding: 0.5rem 1rem;" id="reset-btn" disabled>
+                        Reset Vizite
+                    </button>
+                </div>
+            </div>
+            
             <div class="list-container" id="list-container">
                 <!-- Aici se vor afișa casele -->
+            </div>
+        </div>
+        
+        <!-- Modal login admin -->
+        <div id="admin-login-modal" class="modal modal-view hidden">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span style="font-size: 1.5rem;">🔧</span>
+                    Login Admin
+                </h3>
+                <button class="close-btn" onclick="closeAdminLogin()">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Parolă Admin:</label>
+                <input type="password" class="form-input" id="admin-password" placeholder="Introdu parola de admin" required>
+            </div>
+            
+            <div class="action-buttons">
+                <button onclick="verifyAdmin()" class="btn btn-primary" style="flex: 1;">
+                    Login
+                </button>
+                <button onclick="closeAdminLogin()" class="btn btn-secondary" style="flex: 1;">
+                    Anulează
+                </button>
             </div>
         </div>
         
@@ -1148,6 +1254,8 @@
         let isConnected = false;
         let userLocationMarker = null;
         let zonePolygon = null;
+        let isAdmin = false;
+        let visitedHouses = JSON.parse(localStorage.getItem('visitedHouses') || '{}');
         
         document.addEventListener('DOMContentLoaded', init);
         
@@ -1365,11 +1473,10 @@
             
             if (isConnected) {
                 statusElement.className = 'connection-status connected';
+                showToast('✅ Conectat la baza de date', 'success');
             } else {
                 statusElement.className = 'connection-status disconnected';
             }
-            
-            statusElement.classList.remove('hidden');
         }
         
         function loadPins() {
@@ -1397,7 +1504,8 @@
             markers = [];
             
             pins.forEach(pin => {
-                const icon = pin.icon || '🎄';
+                const isVisited = visitedHouses[pin.id];
+                const icon = isVisited ? '✅' : (pin.icon || '🎄');
                 const marker = L.marker([pin.lat, pin.lng], {
                     icon: L.divIcon({
                         html: `<div style="font-size: 42px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); transform: translateY(-5px);">${icon}</div>`,
@@ -1407,7 +1515,7 @@
                     })
                 }).addTo(map);
                 
-                const tooltipText = `<strong>${pin.name}</strong><br>Str. ${pin.address}, Nr. ${pin.streetNumber}`;
+                const tooltipText = `<strong>${pin.name}</strong><br>Str. ${pin.address}, Nr. ${pin.streetNumber}${isVisited ? '<br>✅ Vizitată' : ''}`;
                 marker.bindTooltip(tooltipText, {
                     direction: 'top',
                     offset: [0, -40],
@@ -1421,8 +1529,9 @@
         
         function updatePinCount() {
             const count = pins.length;
+            const visitedCount = Object.keys(visitedHouses).length;
             const text = count === 1 ? 'casă' : 'case';
-            document.getElementById('pin-count-text').textContent = `${count} ${text}`;
+            document.getElementById('pin-count-text').textContent = `${count} ${text} (${visitedCount} vizitate)`;
         }
         
         function showError(message) {
@@ -1486,6 +1595,58 @@
             hideModal('add-modal');
             hideModal('view-modal');
             hideModal('list-modal');
+            hideModal('admin-login-modal');
+        }
+        
+        // === SISTEM TRACKING VIZITE ===
+        function toggleVisited(houseId) {
+            if (visitedHouses[houseId]) {
+                delete visitedHouses[houseId];
+            } else {
+                visitedHouses[houseId] = true;
+            }
+            
+            localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+            updateMap();
+            updatePinCount();
+            showListModal(); // Reîncarcă lista pentru a reflecta schimbările
+        }
+        
+        function resetAllVisited() {
+            if (!isAdmin) {
+                showToast('❌ Nu ai permisiunea de a reseta vizitele!', 'error');
+                return;
+            }
+            
+            visitedHouses = {};
+            localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+            updateMap();
+            updatePinCount();
+            showListModal();
+            showToast('✅ Toate vizitele au fost resetate!', 'success');
+        }
+        
+        // === SISTEM ADMIN ===
+        function showAdminLogin() {
+            showModal('admin-login-modal');
+        }
+        
+        function closeAdminLogin() {
+            hideModal('admin-login-modal');
+            document.getElementById('admin-password').value = '';
+        }
+        
+        function verifyAdmin() {
+            const password = document.getElementById('admin-password').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.getElementById('reset-btn').disabled = false;
+                closeAdminLogin();
+                showToast('✅ Login admin reușit!', 'success');
+            } else {
+                showToast('❌ Parolă incorectă!', 'error');
+            }
         }
         
         // === MODAL LISTA CASE ===
@@ -1514,20 +1675,22 @@
                 `;
             } else {
                 sortedPins.forEach(pin => {
+                    const isVisited = visitedHouses[pin.id];
                     const listItem = document.createElement('div');
-                    listItem.className = 'list-item';
+                    listItem.className = `list-item ${isVisited ? 'visited' : ''}`;
                     listItem.innerHTML = `
-                        <div class="list-icon">${pin.icon || '🎄'}</div>
+                        <div class="list-icon">${isVisited ? '✅' : (pin.icon || '🎄')}</div>
                         <div class="list-details">
                             <div class="list-family">${pin.name}</div>
                             <div class="list-address">Str. ${pin.address}, Nr. ${pin.streetNumber}</div>
                             ${pin.schedule ? `<div class="list-schedule">🕐 ${pin.schedule}</div>` : ''}
+                            ${pin.notes ? `<div class="list-notes">📝 ${pin.notes}</div>` : ''}
+                            <div class="checkbox-container">
+                                <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
+                                <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat aici</span>
+                            </div>
                         </div>
                     `;
-                    listItem.addEventListener('click', () => {
-                        closeListModal();
-                        showPin(pin);
-                    });
                     listContainer.appendChild(listItem);
                 });
             }
@@ -1697,14 +1860,15 @@
         
         function showPin(pin) {
             selectedPin = pin;
+            const isVisited = visitedHouses[pin.id];
             const addressText = `Str. ${pin.address}, Nr. ${pin.streetNumber}`;
             
             let html = `
                 <div class="modal-header">
                     <div>
-                        <h3 class="modal-title">${pin.name}</h3>
+                        <h3 class="modal-title">${pin.name} ${isVisited ? '✅' : ''}</h3>
                         <p class="pin-detail">
-                            <span>${pin.icon || '🎄'}</span>
+                            <span>${isVisited ? '✅' : (pin.icon || '🎄')}</span>
                             <span class="pin-info">${addressText}</span>
                         </p>
                     </div>
@@ -1728,6 +1892,14 @@
                     ${pin.notes}
                 </div>`;
             }
+            
+            // Adaugă checkbox pentru tracking
+            html += `
+                <div class="checkbox-container" style="margin: 1rem 1.25rem;">
+                    <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
+                    <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat la această casă</span>
+                </div>
+            `;
             
             document.getElementById('view-content').innerHTML = html;
             showModal('view-modal');
