@@ -859,6 +859,30 @@
             padding-top: 8px;
             margin-top: 8px;
         }
+
+        /* Stiluri pentru marker-ele vizitate */
+        .visited-marker {
+            opacity: 0.6;
+            filter: grayscale(0.7) brightness(1.2);
+            transition: all 0.3s ease;
+        }
+        
+        .visited-marker::before {
+            content: "✅";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 16px;
+            background: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
         
         /* Pe mobil, ajustări de poziționare */
         @media (max-width: 767px) {
@@ -901,6 +925,14 @@
             .custom-tooltip {
                 max-width: 250px;
                 padding: 10px;
+            }
+
+            .visited-marker::before {
+                top: -6px;
+                right: -6px;
+                font-size: 14px;
+                width: 18px;
+                height: 18px;
             }
         }
         
@@ -1436,9 +1468,15 @@
             pins.forEach(pin => {
                 const isVisited = visitedHouses[pin.id];
                 const icon = pin.icon || '🎄';
+                
+                // Creează marker-ul cu stil diferit pentru casele vizitate
                 const marker = L.marker([pin.lat, pin.lng], {
                     icon: L.divIcon({
-                        html: `<div style="font-size: 42px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); transform: translateY(-5px);">${icon}</div>`,
+                        html: `
+                            <div class="${isVisited ? 'visited-marker' : ''}" style="font-size: 42px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4)); transform: translateY(-5px); position: relative;">
+                                ${icon}
+                            </div>
+                        `,
                         className: 'custom-marker',
                         iconSize: [42, 42],
                         iconAnchor: [21, 42]
@@ -1449,7 +1487,8 @@
                 let tooltipContent = `
                     <div class="custom-tooltip">
                         <div class="tooltip-family">
-                            ${pin.icon || '🎄'} ${pin.name}
+                            ${isVisited ? '✅ ' : ''}${pin.icon || '🎄'} ${pin.name}
+                            ${isVisited ? '<span style="color: #059669; font-size: 12px;">(Vizitată)</span>' : ''}
                         </div>
                         <div class="tooltip-address">
                             📍 Str. ${pin.address}, Nr. ${pin.streetNumber}
@@ -1572,6 +1611,7 @@
             }
             
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+            updateMap();
             updatePinCount();
             showListModal(); // Reîncarcă lista pentru a reflecta schimbările
         }
@@ -1584,6 +1624,7 @@
             
             visitedHouses = {};
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
+            updateMap();
             updatePinCount();
             showListModal();
             showToast('✅ Toate vizitele au fost resetate!', 'success');
@@ -1654,9 +1695,9 @@
                     }
                     
                     listItem.innerHTML = `
-                        <div class="list-icon">${pin.icon || '🎄'}</div>
+                        <div class="list-icon">${isVisited ? '✅' : (pin.icon || '🎄')}</div>
                         <div class="list-details">
-                            <div class="list-family">${pin.name}</div>
+                            <div class="list-family">${pin.name} ${isVisited ? '<span style="color: #059669; font-size: 12px;">(Vizitată)</span>' : ''}</div>
                             <div class="list-address">Str. ${pin.address}, Nr. ${pin.streetNumber}</div>
                             ${pin.schedule ? `<div class="list-schedule">🕐 ${pin.schedule}</div>` : ''}
                             ${pin.notes ? `<div class="list-notes">📝 ${pin.notes}</div>` : ''}
@@ -1832,14 +1873,15 @@
         
         function showPin(pin) {
             selectedPin = pin;
+            const isVisited = visitedHouses[pin.id];
             const addressText = `Str. ${pin.address}, Nr. ${pin.streetNumber}`;
             
             let html = `
                 <div class="modal-header">
                     <div>
-                        <h3 class="modal-title">${pin.name}</h3>
+                        <h3 class="modal-title">${pin.name} ${isVisited ? '✅' : ''}</h3>
                         <p class="pin-detail">
-                            <span>${pin.icon || '🎄'}</span>
+                            <span>${isVisited ? '✅' : (pin.icon || '🎄')}</span>
                             <span class="pin-info">${addressText}</span>
                         </p>
                     </div>
@@ -1862,6 +1904,16 @@
                     <strong>📝 Detalii:</strong><br>
                     ${pin.notes}
                 </div>`;
+            }
+            
+            // Adaugă buton pentru marcare vizită (doar pentru admin)
+            if (isAdmin) {
+                html += `
+                    <div class="checkbox-container" style="margin: 1rem 1.25rem;">
+                        <div class="checkbox ${isVisited ? 'checked' : ''}" onclick="toggleVisited('${pin.id}')"></div>
+                        <span class="checkbox-label" onclick="toggleVisited('${pin.id}')">Am colindat la această casă</span>
+                    </div>
+                `;
             }
             
             document.getElementById('view-content').innerHTML = html;
