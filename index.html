@@ -1520,7 +1520,16 @@
                     className: 'custom-tooltip-container'
                 });
                 
-                marker.on('click', () => showPin(pin));
+                // MODIFICARE: Dacă ești admin, click-ul direct pe marker bifează/debifează
+                if (isAdmin) {
+                    marker.on('click', () => {
+                        toggleVisited(pin.id);
+                        closeViewModal(); // Închide modalul dacă este deschis
+                    });
+                } else {
+                    marker.on('click', () => showPin(pin));
+                }
+                
                 markers.push(marker);
             });
         }
@@ -1606,14 +1615,20 @@
             
             if (visitedHouses[houseId]) {
                 delete visitedHouses[houseId];
+                showToast('✅ Casă marcată ca nevizitată');
             } else {
                 visitedHouses[houseId] = true;
+                showToast('✅ Casă marcată ca vizitată');
             }
             
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
-            updateMap();
+            updateMap(); // Actualizează direct harta
             updatePinCount();
-            showListModal(); // Reîncarcă lista pentru a reflecta schimbările
+            
+            // Actualizează lista dacă este deschisă
+            if (!document.getElementById('list-modal').classList.contains('hidden')) {
+                showListModal();
+            }
         }
         
         function resetAllVisited() {
@@ -1626,7 +1641,12 @@
             localStorage.setItem('visitedHouses', JSON.stringify(visitedHouses));
             updateMap();
             updatePinCount();
-            showListModal();
+            
+            // Actualizează lista dacă este deschisă
+            if (!document.getElementById('list-modal').classList.contains('hidden')) {
+                showListModal();
+            }
+            
             showToast('✅ Toate vizitele au fost resetate!', 'success');
         }
         
@@ -1648,7 +1668,14 @@
                 document.getElementById('reset-btn').disabled = false;
                 closeAdminLogin();
                 showToast('✅ Login admin reușit!', 'success');
-                showListModal(); // Reîncarcă lista pentru a afișa controalele admin
+                
+                // Reîncarcă harta cu noile funcționalități admin
+                updateMap();
+                
+                // Reîncarcă lista dacă este deschisă
+                if (!document.getElementById('list-modal').classList.contains('hidden')) {
+                    showListModal();
+                }
             } else {
                 showToast('❌ Parolă incorectă!', 'error');
             }
